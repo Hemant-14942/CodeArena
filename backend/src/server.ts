@@ -9,10 +9,11 @@ import rateLimit from 'express-rate-limit';
 import connectDB from './config/db';
 import AppError from './utils/AppError';
 import globalErrorHandler from './middleware/errorMiddleware';
-import authRouter from './routes/authRoutes';
+import allroutes from './routes/index';
 
 dotenv.config();
 connectDB();
+
 
 const app = express();
 const PORT = process.env.PORT  || 5000;
@@ -57,7 +58,7 @@ if (process.env.NODE_ENV === 'development') {
 app.get('/', (req: Request, res: Response) => {
     res.status(200).send({ message: 'API is running...' });
 });
-app.use('/api/auth', authRouter);
+app.use('/', allroutes);
 
 // Test the Rate Limit (Refresh this page 101 times and see what happens!)
 app.get('/api/test', (req, res) => {

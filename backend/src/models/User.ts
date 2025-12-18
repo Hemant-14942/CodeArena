@@ -10,7 +10,7 @@ export interface IUser extends Document {
     isAdmin: boolean;
     
     // Profile (Social)
-    avatar?: string; // URL to image (e.g., Cloudinary)
+    avatar?: string; // URL to image (e.g., Cloudinary, ImageKit)
     bio?: string;
     links?: {
         github?: string;

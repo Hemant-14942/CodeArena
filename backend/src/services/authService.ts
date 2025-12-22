@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import User from '../models/User';
+import User from '../models/user';
 
 // Find a user by email
 export const findUserByEmail = async (email: string) => {

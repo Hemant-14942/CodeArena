@@ -1,29 +1,32 @@
-import jwt, { Secret, SignOptions } from 'jsonwebtoken';
-import { Response } from 'express';
+import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
 
-const generateToken = (res: Response, userId: string) => {
-    // 1. Fetch values from .env
-    const secret = process.env.JWT_SECRET;
-    const expiresIn = process.env.JWT_EXPIRE; // Match the name in your .env file!
+const ACCESS_SECRET = process.env.ACCESS_TOKEN_SECRET!;
+const REFRESH_SECRET = process.env.REFRESH_TOKEN_SECRET!;
 
-    // 2. SAFETY CHECK: Ensure they exist before using them
-    if (!secret || !expiresIn) {
-        throw new Error("JWT_SECRET or JWT_EXPIRE is not defined in the .env file");
-    }
-
-    // 3. Generate the Token
-    // We cast options explicitly to avoid the "Overload" error
-    const token = jwt.sign({ userId }, secret as Secret, {
-        expiresIn: expiresIn // Now TS knows this is a valid string
-    } as SignOptions);
-
-    // 4. Send the Cookie
-    res.cookie('jwt', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV !== 'development', // Use HTTPS in production
-        sameSite: 'strict',
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 Days in milliseconds
-    });
+export const createAccessToken = (userId: string) => {
+  return jwt.sign(
+    { sub: userId },
+    ACCESS_SECRET,
+    { expiresIn: "15m" }
+  );
 };
 
-export default generateToken;
+export const createRefreshToken = (userId: string, tokenId: string) => {
+  return jwt.sign(
+    { sub: userId, jti: tokenId },
+    REFRESH_SECRET,
+    { expiresIn: "7d" }
+  );
+};
+
+export const verifyRefreshToken = (token: string) => {
+  return jwt.verify(token, REFRESH_SECRET) as {
+    sub: string;
+    jti: string;
+  };
+};
+
+ export const generateTokenId = () =>{
+   return uuidv4();
+ };

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import Problem from '../models/Problem'; // Import the model we just made
+import Problem from '../models/problem'; // Import the model we just made
 import connectDB from '../config/db'; // Import connection logic
 
 dotenv.config();

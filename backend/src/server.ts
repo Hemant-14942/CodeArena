@@ -1,80 +1,76 @@
-import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
+dotenv.config(); // MUST be first
+
+import express, { Request, Response, NextFunction } from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
-import compression from 'compression'; 
-import cookieParser from 'cookie-parser'; 
-import rateLimit from 'express-rate-limit'; 
+import compression from 'compression';
+import cookieParser from 'cookie-parser';
+import rateLimit from 'express-rate-limit';
+
 import connectDB from './config/db';
+import { connectRedis } from './config/redisClient';
 import AppError from './utils/AppError';
 import globalErrorHandler from './middleware/errorMiddleware';
-import allroutes from './routes/index';
-
-dotenv.config();
-connectDB();
-
+import allroutes from './routes';
 
 const app = express();
-const PORT = process.env.PORT  || 5000;
+const PORT = process.env.PORT || 5000;
 
-
-// --- 1. GLOBAL MIDDLEWARE ---
-
-// Security Headers
+// --- GLOBAL MIDDLEWARE ---
 app.use(helmet());
 
-// Enable CORS (Cross-Origin Resource Sharing)
 app.use(cors({
-    origin: 'http://localhost:3000', // Only allow your Frontend to access
-    credentials: true // Allow cookies to be sent
+  origin: 'http://localhost:3000',
+  credentials: true
 }));
 
-// Rate Limiting: Limit each IP to 100 requests per 15 minutes
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP to 100 requests per windowMs
-    message: 'Too many requests from this IP, please try again after 15 minutes',
-    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'Too many requests from this IP, please try again after 15 minutes',
+  standardHeaders: true,
+  legacyHeaders: false
 });
-app.use('/api', limiter); // Apply to all routes starting with /api
+app.use('/api', limiter);
 
-// Body Parser: Reading data from body into req.body
-app.use(express.json({ limit: '10kb' })); // Limit body size to 10kb (Security)
-
-// Cookie Parser: Reading cookies from the browser
+app.use(express.json({ limit: '10kb' }));
 app.use(cookieParser());
-
-// Compression: Compress all responses (Text/JSON)
 app.use(compression());
 
-// Logger: Only in Development
 if (process.env.NODE_ENV === 'development') {
-    app.use(morgan('dev'));
+  app.use(morgan('dev'));
 }
 
-// --- 2. ROUTES ---
+// --- ROUTES ---
 app.get('/', (req: Request, res: Response) => {
-    res.status(200).send({ message: 'API is running...' });
+  res.status(200).json({ message: 'API is running...' });
 });
+
 app.use('/', allroutes);
 
-// Test the Rate Limit (Refresh this page 101 times and see what happens!)
-app.get('/api/test', (req, res) => {
-    res.json({ status: "success" });
-});
-// 3. HANDLE UNKNOWN URLS (404)
-// If the code reaches here, it means no route matched above
+// --- 404 HANDLER ---
 app.use((req: Request, res: Response, next: NextFunction) => {
-    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
-// 4. GLOBAL ERROR HANDLER
+// --- GLOBAL ERROR HANDLER ---
 app.use(globalErrorHandler);
 
+// --- SERVER BOOTSTRAP ---
+const startServer = async () => {
+  try {
+    await connectDB();
+    await connectRedis();
 
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error('❌ Failed to start server', err);
+    process.exit(1);
+  }
+};
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+startServer();

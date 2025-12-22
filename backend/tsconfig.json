@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es2020",          /* Changed to es2020 for modern features */
-    "module": "commonjs",        /* Node.js uses commonjs */
+    "target": "es2020",
+    "module": "commonjs",
     "rootDir": "./src",
     "outDir": "./dist",
-    "strict": true,              /* Keeps us safe! */
+
+    "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "skipLibCheck": true
   }
 }

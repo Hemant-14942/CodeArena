@@ -1,5 +1,5 @@
 import mongoose,  {Schema, Document} from 'mongoose';
-import { trim } from 'zod';
+import { lowercase } from 'zod';
 export interface IProblem extends Document {
     title: string;
     slug: string;// URL-friendly ID (e.g., "two-sum")
@@ -51,7 +51,8 @@ const problemSchema: Schema = new Schema({
     },
     difficulty: {
         type: String,
-        enum: ['easy', 'medium', 'hard', 'Easy', 'Medium', 'Hard'],
+        enum: ['easy', 'medium', 'hard'],
+        lowercase: true,
         required: true
     },
     category: {

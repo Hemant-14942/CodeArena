@@ -1,6 +1,6 @@
 import express from "express";
-import authroutes from "./authRoutes";
-import imagekitRoutes from "./imagekitRoutes";
+import authroutes from "./auth.routes";
+import imagekitRoutes from "./imagekit.routes";
 const router = express.Router();
 
 router.use("/api/auth", authroutes);

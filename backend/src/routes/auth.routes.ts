@@ -1,7 +1,7 @@
 import express from 'express';
 import { registerUser, loginUser, refreshAccessToken, logoutUser, logoutAllDevices } from '../controllers/authController';
 import {validate} from '../middleware/validate';
-import { registerSchema, loginSchema } from '../schemas/userSchema';
+import { registerSchema, loginSchema } from '../validators/user.zod';
 import { log } from 'console';
 
 const router = express.Router();

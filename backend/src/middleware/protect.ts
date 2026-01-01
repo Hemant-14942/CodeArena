@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import AppError from "../utils/AppError";
 
+
 /*
   =========================
   PROTECT MIDDLEWARE
@@ -42,7 +43,9 @@ export const protect = (
       4️⃣ Attach userId to request
       (used later in controllers)
     */
-    (req as any).userId = decoded.sub;
+    req.user = { _id: decoded.sub };
+    
+    
 
     /*
       5️⃣ Continue to controller

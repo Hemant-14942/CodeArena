@@ -13,7 +13,7 @@ export const createProblemSchema = z.object({
     python: z.string().optional(),
     cpp: z.string().optional(),
     java: z.string().optional(),
-  }).optional(), // ⭐ whole object optional
+  }).optional(), 
 
   testcases: z.array(
     z.object({

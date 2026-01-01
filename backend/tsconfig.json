@@ -4,9 +4,12 @@
     "module": "commonjs",
     "rootDir": "./src",
     "outDir": "./dist",
-
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true
-  }
+  },
+  "files": [
+    "src/types/express.d.ts"
+  ],
+  "include": ["src"]
 }

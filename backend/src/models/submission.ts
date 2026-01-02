@@ -5,7 +5,7 @@ export interface ISubmission extends Document {
   problemId: mongoose.Types.ObjectId;
   language: string;
   code: string;
-  verdict: "Accepted" | "Wrong Answer" | "Runtime Error" | "Time Limit Exceeded";
+  verdict: "Accepted" | "Wrong Answer" | "Runtime Error" | "Time Limit Exceeded"|"Pending";
   createdAt: Date;
 }
 
@@ -38,6 +38,7 @@ const submissionSchema = new Schema<ISubmission>(
         "Wrong Answer",
         "Runtime Error",
         "Time Limit Exceeded",
+        "Pending",
       ],
     },
   },
